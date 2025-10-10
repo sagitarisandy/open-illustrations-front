@@ -3,6 +3,8 @@ import Link from "next/link"
 import SiteNav from "@/components/site-nav"
 import PackElementsGrid from "@/components/pack-elements-grid"
 import { Button } from "@/components/ui/button"
+import PackPreview from "@/components/pack-preview"
+import DownloadDialog from "@/components/download-dialog"
 import { Card, CardContent } from "@/components/ui/card"
 import { getPack, packs } from "@/lib/packs"
 import { Check, Folder, FileBox, Tag } from "lucide-react"
@@ -63,10 +65,8 @@ export default function PackPage({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Button className="h-11 rounded-xl px-6 text-base shadow-sm">Get this pack</Button>
-              <Button variant="secondary" className="h-11 rounded-xl px-6 text-base shadow-sm">
-                Get all access
-              </Button>
+              <DownloadDialog id={1} title={data.title} trigger={<Button className="h-11 rounded-xl px-6 text-base shadow-sm">Get this SVG</Button>} />
+              <Button variant="secondary" className="h-11 rounded-xl px-6 text-base shadow-sm">Get all access</Button>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -102,17 +102,8 @@ export default function PackPage({ params }: { params: { slug: string } }) {
 
           {/* Right preview column: made sticky so it stays in view while scrolling the left content */}
           <div className="space-y-6 md:sticky md:top-24 md:self-start">
-            <div className="rounded-2xl border bg-card p-2 shadow-sm">
-              <div className="aspect-square w-full rounded-xl border bg-muted/40">
-                {/* placeholder hero preview using accent */}
-                <svg viewBox="0 0 600 600" className="h-full w-full rounded-xl" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="600" height="600" fill="#ffffff" />
-                  <rect x="120" y="160" width="360" height="220" rx="20" fill="var(--accent)" opacity="0.14" />
-                  <circle cx="210" cy="440" r="36" fill="var(--accent)" opacity="0.2" />
-                  <path d="M80 520 L520 520" stroke="var(--border)" strokeWidth="3" />
-                </svg>
-              </div>
-            </div>
+            {/* Live preview fetched from API, recolored to match the accent picker */}
+            <PackPreview id={1} />
             {/* <div className="rounded-2xl border bg-card p-2 shadow-sm">
               <Image
                 src="/images/reference-pack-detail.jpg"

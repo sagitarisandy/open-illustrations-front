@@ -1,7 +1,9 @@
 "use client"
 
-import SiteNav, { AccentPicker, useAccent } from "@/components/site-nav"
+import SiteNav from "@/components/site-nav"
 import { IllustrationCard } from "@/components/illustration-card"
+import SvgCard from "@/components/svg-card"
+import DownloadDialog from "@/components/download-dialog"
 import { useEffect, useState } from "react"
 
 type Illustration = {
@@ -13,12 +15,12 @@ type Illustration = {
   premium?: boolean
   fileName?: string
   storageKey?: string
+  imageUrl?: string
   accentColor?: string
   previewSvg?: string
 }
 
 export default function PickPage() {
-  const { accent, setAccent } = useAccent()
   const [items, setItems] = useState<Illustration[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +32,7 @@ export default function PickPage() {
         setLoading(true)
         setError(null)
   // Fetch via internal proxy route to avoid exposing raw origin & handle CORS
-    const res = await fetch("/api/illustrations")
+  const res = await fetch("/api/illustrations?include_presign=1")
         if (!res.ok) throw new Error(`Request failed: ${res.status}`)
         const raw = await res.json()
         const source = Array.isArray(raw)
@@ -45,6 +47,7 @@ export default function PickPage() {
           premium: Boolean(d.is_premium),
           fileName: d.file_name,
           storageKey: d.storage_key,
+          imageUrl: d.image_url,
           accentColor: d.accentColor,
           previewSvg: d.previewSvg,
         }))
@@ -67,7 +70,6 @@ export default function PickPage() {
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-semibold">Illustrations</h1>
-          <AccentPicker value={accent} onChange={setAccent} />
         </div>
         <p className="mb-6 max-w-prose text-muted-foreground">Browse and click to preview. Use the color picker to match accent generation to your brand.</p>
         {loading && (
@@ -87,7 +89,11 @@ export default function PickPage() {
             {items.map((item) => (
               <div key={item.id} className="rounded-2xl border bg-white p-0.5 shadow-sm">
                 <div className="flex h-full flex-col rounded-xl border bg-gray-50 p-4">
-                  <IllustrationCard title={item.title} accent={item.accentColor || "var(--accent)"} />
+                  {item.imageUrl ? (
+                    <SvgCard title={item.title} url={item.imageUrl} />
+                  ) : (
+                    <IllustrationCard title={item.title} accent={item.accentColor || "var(--accent)"} />
+                  )}
                   <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
                     {item.category && (
                       <span className="rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
@@ -98,6 +104,15 @@ export default function PickPage() {
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                         Premium
                       </span>
+                    )}
+                  </div>
+                  <div className="mt-3 flex justify-center">
+                    {typeof item.id !== "undefined" && (
+                      <DownloadDialog
+                        id={Number(item.id)}
+                        title={item.title}
+                        trigger={<button className="text-xs text-primary hover:underline">Download</button>}
+                      />
                     )}
                   </div>
                 </div>
