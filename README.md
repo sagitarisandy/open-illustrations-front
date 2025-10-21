@@ -47,3 +47,22 @@ MIT – see `LICENSE`.
 
 ---
 Contributions & ideas welcome. Have fun! 🧩
+
+## 🐳 Docker
+
+Build and run the app in Docker:
+
+```bash
+docker build -t open-illustrations .
+docker run --rm -p 3000:3000 \
+	-e API_ILLUSTRATIONS=http://host.docker.internal:8080 \
+	open-illustrations
+```
+
+Or with docker-compose (reads `.env` automatically):
+
+```bash
+docker compose up --build
+```
+
+Open http://localhost:3000

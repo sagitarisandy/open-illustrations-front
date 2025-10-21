@@ -1,0 +1,28 @@
+# Node & Next.js
+node_modules
+.next
+out
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# VCS
+.git
+.gitignore
+
+# OS
+.DS_Store
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode
+.idea
+
+# Misc
+coverage
+**/*.local.*

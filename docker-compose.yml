@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    image: open-illustrations:latest
+    ports:
+      - "3000:3000"
+    environment:
+      # Forward your API base to the container
+      - API_ILLUSTRATIONS=${API_ILLUSTRATIONS:-http://host.docker.internal:8080}
+      - NODE_ENV=production
+    # If you prefer to use a .env file, docker-compose automatically reads from .env in the project root
+    # Uncomment for local bind mount dev (then also use next dev)
+    # volumes:
+    #   - .:/app
